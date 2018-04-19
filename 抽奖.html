@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title> 抽奖活动 </title>
+	<style type="text/css">
+		body {
+			padding-top: 100px;
+			font: 12px "\5B8B\4F53", sans-serif;
+			text-align: center;
+		}
+		.resultBox {
+			width: 700px;
+			margin: 0 auto;
+			padding: 100px 0;
+			border: 3px solid #40AA53;
+			background: #efe;
+			text-align: center;
+		}
+		.resultBox #result {
+			width: 700px;
+			color: #cc0000;
+			font-size: 50pt;
+			font-family: Verdana;
+			text-align: center;
+			border: none;
+			outline: none;
+			background: transparent;
+		}
+		.buttonBox {
+			margin: 50px 0 0 0;
+		}
+		.buttonBox .btn{
+			padding: 0 30px;
+			margin: 0 10px;
+			color: #555;
+			font-family: "\5B8B\4F53", sans-serif;
+			font-size: 40px;
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+	<script type="text/javascript">
+		// 抽奖数据，以英文逗号分隔
+		var allData = 
+"101 高美玲,\
+102 洪明霞,\
+103 黄惠如,\
+104 黄水菊,\
+106 莫珊,\
+107 谢水娟,\
+108 蔡腾锐,\
+109 陈峰,\
+110 陈宏超,\
+111 陈启理,\
+112 陈志扬,\
+113 邓俊钊,\
+114 冯明章,\
+115 辜锐森,\
+116 何俊霖,\
+117 黄德成,\
+118 赖煜,\
+119 黎周楚,\
+120 李兵,\
+122 李知行,\
+123 练洪威,\
+124 梁嘉城,\
+125 粱键宇,\
+126 林键圻,\
+127 林毅,\
+128 龙超艺,\
+129 卢训璞,\
+131 马群又,\
+132 麦杰豪,\
+133 孙瑞祖,\
+134 田林杰,\
+136 王凯,\
+137 王仲泰,\
+138 温星宇,\
+139 吴景童,\
+140 吴雷,\
+141 谢朗星,\
+142 徐旭辉,\
+143 翟啟宏,\
+144 张民翔,\
+145 张全康,\
+146 张伟超,\
+147 郑灿佳,\
+148 朱书龙,\
+149 闫帅帅,\
+201 陈纪璇,\
+202 陈嘉慧,\
+203 代欣,\
+204 宋百麒,\
+205 余秋媚,\
+206 郑敏华,\
+207 周静,\
+208 蔡树豪,\
+209 陈超文,\
+210 陈佳铭,\
+211 陈明锋,\
+212 陈展辉,\
+213 戴文仲,\
+215 范文富,\
+216 冯豪冲,\
+217 黄康,\
+218 黄一恒,\
+219 基圣磊,\
+220 赖文进,\
+221 黎炽锋,\
+222 李耀雄,\
+223 梁万安,\
+224 林勇健,\
+225 林煜斌,\
+226 刘付坤,\
+227 马文强,\
+228 马镇华,\
+229 倪俊俊,\
+230 潘敏开,\
+231 孙祁,\
+232 韦桂锋,\
+233 魏董斌,\
+234 吴昊,\
+235 伍宏经,\
+236 薛虎,\
+238 杨立发,\
+239 叶博仁,\
+241 易显君,\
+242 张英鹏,\
+243 章厅,\
+244 赵垒垒,\
+246 邹子文,\
+251 李垚昌";
+
+		// 分隔字符串，将数据存入数组
+		var allDataArr = allData.split(",");
+		// 数组长度
+		var num = allDataArr.length - 1;
+		// 定时器id
+		var timer;
+
+		/**
+		 * "开始"按钮点击事件处理程序
+		 * @return none
+		 */
+		function start() {
+			// 避免重复点击时生成多个定时器，每次都先清除再生成
+			clearInterval(timer);
+			// 随机数据变换速度，越小变换速度越快
+			timer = setInterval("changeData()", 46);
+		}
+
+		/**
+		 * "结束"按钮点击事件处理程序
+		 * @return none
+		 */
+		function stop() {
+			clearInterval(timer);
+			blockData();
+			console.log(allDataArr.length);
+		}
+
+		/**
+		 * 改变数据
+		 * @return none
+		 */
+		function changeData() {
+			document.getElementById('result').value = allDataArr[getRandromNum(0, num)];
+		}
+
+		/**
+		 * 产生随机数
+		 * @param  {number} min 最小值
+		 * @param  {number} max 最大值
+		 * @return {number}     范围在[min, max)的随机数
+		 */
+		function getRandromNum(min, max) {
+			return parseInt(Math.random()*(max-min+1));
+		}
+
+		/**
+		 * 去掉已经被选中过的数据，避免在下次抽取中抽到
+		 * 刷新页面可以重置
+		 * @return none
+		 */
+		function blockData() {
+			// 去掉中间的
+			allData = allData.replace(document.getElementById('result').value, "").replace(",,", ",");
+			// 去掉第一个的 ,
+			if (allData.substr(0, 1) == ",") {
+				allData = allData.substr(1, allData.length);
+			}
+			// 去掉最后一个的 ,
+			if (allData.substr(allData.length-1, 1) == ",") {
+				allData = allData.substring(0, allData.length-1);
+			}
+			allDataArr = allData.split(",");
+			num = allDataArr.length-1;
+		}
+	</script>
+	<div class="resultBox">
+		<input type="text" id="result" value="抽奖结果">
+	</div>
+	<div class="buttonBox">
+		<button class="btn" onclick="start()"  accessKey="c">开始(Alt+c)</button>
+		<button class="btn" onclick="stop()" accesskey="v">结束(Alt+v)</button>
+	</div>
+</body>
+</html>
