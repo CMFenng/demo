@@ -36,15 +36,16 @@ function handleData(data) {
 }
 
 
-
-function canvasApp() {
-
-    var cvs = document.getElementById("cvs");
-    var ctx = cvs.getContext("2d");
-
-    drawScreen(ctx);
-
-}
+// function canvasApp() {
+//
+//     var cvs = document.getElementById("cvs");
+//     var ctx = cvs.getContext("2d");
+//
+//     cvs.style.transform = `rotate(${ -Math.PI * 2 / 6 / 2 }deg)`;
+//
+//     drawScreen(ctx);
+//
+// }
 
 // 封装一个扇形函数
 
@@ -54,61 +55,177 @@ function canvasApp() {
 // sDeg: 旋转起始角度
 // eDeg: 旋转终点角度
 
-function drawSector(ctx, x, y, r, sDeg, eDeg) {
-    // 初始保存
-    ctx.save();
+// function drawSector(ctx, x, y, r, sDeg, eDeg) {
+//     // 初始保存
+//     ctx.save();
+//
+//     //位移到目标点
+//     // ctx.translate(x, y);
+//     ctx.beginPath();
+//
+//     // 画出圆弧
+//     ctx.arc(0, 0, r, sDeg, eDeg);
+//
+//     // 再次保存以备旋转
+//     ctx.save();
+//
+//     // 旋转至起始角度
+//     ctx.rotate(eDeg);
+//
+//     // 移动到终点，准备连接终点与圆心
+//     ctx.moveTo(r, 0);
+//
+//     // 连接到圆心
+//     ctx.lineTo(0, 0);
+//
+//     // 还原
+//     ctx.restore();
+//
+//     // 旋转至起点角度
+//     ctx.rotate(sDeg);
+//
+//     // 从圆心连接到起点
+//     ctx.lineTo(r, 0);
+//
+//     ctx.closePath();
+//     // 还原到最初保存的状态
+//     ctx.restore();
+// }
 
-    //位移到目标点
-    // ctx.translate(x, y);
-    ctx.beginPath();
+// function drawScreen (ctx) {
+//
+//     var deg = Math.PI / 180;
+//
+//     var obj = {
+//         x: 300,
+//         y: 300,
+//         r: 300,
+//         sDeg: [30, 111, 190, 233, 280, 345],
+//         eDeg: [111, 190, 233, 280, 345, 30],
+//         style: ['#f00', '#0f0', '#00f', '#789', '#abcdef']
+//     }
+//     // ctx.translate(300, 300);
+//     for (var i = 0; i < obj.sDeg.length; i++) {
+//
+//         drawSector(ctx, obj.x, obj.y, obj.r, obj.sDeg[i] * deg, obj.eDeg[i] * deg);
+//         ctx.fill();
+//         ctx.fillStyle = obj.style[i];
+//     }
+//
+// }
 
-    // 画出圆弧
-    ctx.arc(0, 0, r, sDeg, eDeg);
+// function drawScreen(ctx) {
+//     var deg = Math.PI / 180;
+//
+//     let obj = {
+//         x: 300,
+//         y: 300,
+//         r: 300-5,
+//         sDeg: [0, 60, 120, 180, 240, 300],
+//         eDeg: [60, 120, 180, 240, 300, 360],
+//         text: ["奖品1", "奖品2", "奖品3", "奖品4", "奖品5", "奖品6"]
+//     };
+//
+//     for (let i =0; i <obj.sDeg.length; i++) {
+//
+//         drawSector(ctx, obj.x, obj.y, obj.r, obj.sDeg[i] * deg, obj.eDeg[i] * deg, obj.text[i]);
+//
+//     }
+//
+//     let cvs_pointer = document.getElementById("cvs_pointer");
+//     var ctx_pointer = cvs_pointer.getContext("2d");
+//
+//     cvs_pointer.style.transform = `rotate(-90deg)`;
+//
+//     ctx_pointer.save();
+//     ctx_pointer.beginPath();
+//     // ctx.moveTo(300,300);
+//     ctx_pointer.arc(100, 100, 50, Math.PI/10, Math.PI*2-Math.PI/10);
+//     ctx_pointer.lineTo(200, 100);
+//     ctx_pointer.closePath();
+//     // ctx.stroke();
+//     ctx_pointer.fillStyle = "#f00";
+//     ctx_pointer.fill();
+// }
 
-    // 再次保存以备旋转
-    ctx.save();
+// function drawSector(ctx, x, y, r, sDeg, eDeg, text) {
+//     ctx.save();
+//     ctx.beginPath();
+//     ctx.lineWidth = 5;
+//     ctx.arc(x, y, r, sDeg, eDeg);
+//     ctx.strokeStyle = "#40AA53";
+//     ctx.stroke();
+//     ctx.lineWidth = 1;
+//     ctx.lineTo(x, y);
+//     ctx.closePath();
+//     ctx.strokeStyle = "#40AA53";
+//     ctx.stroke();
+//     ctx.fillStyle = "#0ff";
+//     ctx.fill();
+//     ctx.fillStyle = "#cc0000";
+//     ctx.font = "50px Microsoft YaHei";
+//     ctx.textAlign = "center";
+//     var width = ctx.measureText(text);
+//     ctx.fillText(text, 300, 100);
+//     console.log(width);
+//     // ctx.measureText(text);
+// }
 
-    // 旋转至起始角度
-    ctx.rotate(eDeg);
+//====================================
 
-    // 移动到终点，准备连接终点与圆心
-    ctx.moveTo(r, 0);
 
-    // 连接到圆心
-    ctx.lineTo(0, 0);
+// 初始化转盘
+function initPlate() {
+    var plateCanvas = document.getElementById("plate");
+    var pointerCanvas = document.getElementById("pointer");
+    var plateCtx = plateCanvas.getContext("2d");
+    var pointerCtx = pointerCanvas.getContext("2d");
 
-    // 还原
-    ctx.restore();
+    // 测试数据
+    var d = 0;
+    pointerCanvas.onclick = function () {
+        d = d + 3600;
+        console.log(d);
+        plateCanvas.style.transform = `rotate(${ d }deg)`;
+    }
 
-    // 旋转至起点角度
-    ctx.rotate(sDeg);
+    var deg = Math.PI;
+    // 转盘宽高
+    var plateW = plateCanvas.width;
+    var plateH = plateCanvas.height;
+    var plateR = plateCanvas.width;
+    console.log(plateW);
+    console.log(plateH);
+    var itemList = {
+        text: ["奖品1","奖品2","奖品3","奖品4","奖品5","奖品6"],
+        radio: []
+    };
 
-    // 从圆心连接到起点
-    ctx.lineTo(r, 0);
+    // initCircle();
+    // initText();
+    // initPointer();
 
-    ctx.closePath();
-    // 还原到最初保存的状态
-    ctx.restore();
+    // 初始化圆盘
+    function initCircle() {
+        drawSector(plateCtx, plateW/2, plateH/2, plateR, 0, 30);
+    }
+    // 初始化文本
+    function initText() {
+        
+    }
+    // 初始化指针
+    function initPointer() {
+        
+    }
 }
 
-function drawScreen (ctx) {
+function drawSector(ctx, x, y, r, sDeg, eDeg) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.lineWidth = 5;
+    ctx.arc(x, y, r, sDeg, eDeg);
+    ctx.strokeStyle = "#40AA53";
+    ctx.stroke();
 
-    var deg = Math.PI / 180;
-
-    var obj = {
-        x: 300,
-        y: 300,
-        r: 300,
-        sDeg: [30, 111, 190, 233, 280, 345],
-        eDeg: [111, 190, 233, 280, 345, 30],
-        style: ['#f00', '#0f0', '#00f', '#789', '#abcdef']
-    }
-    // ctx.translate(300, 300);
-    for (var i = 0; i < obj.sDeg.length; i++) {
-
-        drawSector(ctx, obj.x, obj.y, obj.r, obj.sDeg[i] * deg, obj.eDeg[i] * deg);
-        ctx.fill();
-        ctx.fillStyle = obj.style[i];
-    }
-
+    ctx.closePath();
 }

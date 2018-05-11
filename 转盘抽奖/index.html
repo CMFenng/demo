@@ -4,30 +4,33 @@
     <meta charset="UTF-8">
     <title>转盘抽奖</title>
     <link rel="stylesheet" href="css/style.css">
-    <script src="js/jquery-3.3.1.min.js"></script>
+    <!--<script src="js/jquery-3.3.1.min.js"></script>-->
     <script src="js/fun.js"></script>
 </head>
 <body>
     <!--<input id="fileIpt" type="file" onchange="getFileDate(event)" >-->
-    <div id="describe" class="hide">
-        <p>文件格式要求：</p>
-        <p>
-            格式：奖品名称=概率(值越高越容易抽中)<br>
-            示例：<br>
-            iWatch=15<br>
-            iPhone=20<br>
-            MacBook=35<br>
-            iPad=25<br>
-            iMac=5<br>
-        </p>
-    </div>
+    <!--<div id="describe" class="hide">-->
+        <!--<p>文件格式要求：</p>-->
+        <!--<p>-->
+            <!--格式：奖品名称=概率(值越高越容易抽中)<br>-->
+            <!--示例：<br>-->
+            <!--iWatch=15<br>-->
+            <!--iPhone=20<br>-->
+            <!--MacBook=35<br>-->
+            <!--iPad=25<br>-->
+            <!--iMac=5<br>-->
+        <!--</p>-->
+    <!--</div>-->
     <div id="box" class="display">
-        <canvas id="cvs" width="600" height="600">
+        <canvas id="plate" width="600" height="600">
+            浏览器不支持！
+        </canvas>
+        <canvas id="pointer" width="200" height="200">
             浏览器不支持！
         </canvas>
     </div>
     <script>
-        canvasApp();
+        initPlate();
     </script>
 </body>
 </html>

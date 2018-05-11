@@ -1,6 +1,5 @@
 iWatch=15
 iPhone=20
 MacBook=35
-
 iPad=25
 iMac=5
