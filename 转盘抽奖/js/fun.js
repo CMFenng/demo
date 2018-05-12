@@ -181,6 +181,8 @@ function initPlate() {
     var plateCtx = plateCanvas.getContext("2d");
     var pointerCtx = pointerCanvas.getContext("2d");
 
+    // pointerCanvas.style.transform = `rotate(-90deg)`;
+
     // 测试数据
     var d = 0;
     pointerCanvas.onclick = function () {
@@ -189,43 +191,66 @@ function initPlate() {
         plateCanvas.style.transform = `rotate(${ d }deg)`;
     }
 
-    var deg = Math.PI;
-    // 转盘宽高
-    var plateW = plateCanvas.width;
-    var plateH = plateCanvas.height;
-    var plateR = plateCanvas.width;
-    console.log(plateW);
-    console.log(plateH);
-    var itemList = {
-        text: ["奖品1","奖品2","奖品3","奖品4","奖品5","奖品6"],
+    var deg = Math.PI / 180;
+
+    var plateCenterX = plateCanvas.width/2;
+    var plateCenterY = plateCanvas.height/2;
+    var lineW = 5;
+    // 转盘半径
+    var plateR = plateCenterX < plateCenterY ? plateCenterX-lineW : plateCenterY-lineW;
+    var itemData = {
+        text: ["奖品1", "奖品2", "奖品3", "奖品4", "奖品5", "奖品6"],
         radio: []
     };
 
-    // initCircle();
-    // initText();
-    // initPointer();
+    initCircle();
+    initText();
+    initPointer();
 
     // 初始化圆盘
     function initCircle() {
-        drawSector(plateCtx, plateW/2, plateH/2, plateR, 0, 30);
+        let num = itemData.text.length;
+        let sectorDeg = Math.PI * 2 / num;
+
+        for (let i = 0; i < num; i++) {
+
+            drawSector(plateCtx, plateCenterX, plateCenterY, plateR, sectorDeg*i, sectorDeg*(i+1));
+        }
     }
+
     // 初始化文本
     function initText() {
-        
+
     }
+
     // 初始化指针
     function initPointer() {
-        
+        let pointerCenterX = pointerCanvas.width/2;
+        let pointerCenterY = pointerCanvas.height/2;
+        let pointerR = pointerCenterX < pointerCenterY ? pointerCenterX/2 : pointerCenterY/2;
+
+        pointerCtx.save();
+        pointerCtx.beginPath();
+        pointerCtx.arc(pointerCenterX, pointerCenterY, pointerR, Math.PI/10, Math.PI*2-Math.PI/10);
+        pointerCtx.lineTo(pointerCenterX+pointerR*2, pointerCenterY);
+        pointerCtx.closePath();
+        pointerCtx.fillStyle = "#ff0000";
+        pointerCtx.fill();
     }
-}
 
-function drawSector(ctx, x, y, r, sDeg, eDeg) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.lineWidth = 5;
-    ctx.arc(x, y, r, sDeg, eDeg);
-    ctx.strokeStyle = "#40AA53";
-    ctx.stroke();
-
-    ctx.closePath();
+    function drawSector(ctx, x, y, r, sDeg, eDeg) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(x, y, r, sDeg, eDeg);
+        ctx.lineWidth = lineW;
+        ctx.strokeStyle = "#40AA53";
+        ctx.stroke();
+        ctx.lineTo(x, y);
+        ctx.lineWidth = 1;
+        ctx.closePath();
+        ctx.strokeStyle = "#40AA53";
+        ctx.stroke();
+        ctx.fillStyle = "#0ff";
+        ctx.fill();
+    }
 }
