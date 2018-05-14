@@ -36,53 +36,28 @@ function handleData(data) {
 }
 
 
-// function drawSector(ctx, x, y, r, sDeg, eDeg) {
-//     // 初始保存
-//     ctx.save();
-//
-//     //位移到目标点
-//     // ctx.translate(x, y);
-//     ctx.beginPath();
-//
-//     // 画出圆弧
-//     ctx.arc(0, 0, r, sDeg, eDeg);
-//
-//     // 再次保存以备旋转
-//     ctx.save();
-//
-//     // 旋转至起始角度
-//     ctx.rotate(eDeg);
-//
-//     // 移动到终点，准备连接终点与圆心
-//     ctx.moveTo(r, 0);
-//
-//     // 连接到圆心
-//     ctx.lineTo(0, 0);
-//
-//     // 还原
-//     ctx.restore();
-//
-//     // 旋转至起点角度
-//     ctx.rotate(sDeg);
-//
-//     // 从圆心连接到起点
-//     ctx.lineTo(r, 0);
-//
-//     ctx.closePath();
-//     // 还原到最初保存的状态
-//     ctx.restore();
-// }
-
-
 //====================================
 
 
 // 初始化转盘
 function initPlate() {
-    var plateCanvas = document.getElementById("plate");
-    var plateCtx = plateCanvas.getContext("2d");
-    var pointerCanvas = document.getElementById("pointer");
-    var pointerCtx = pointerCanvas.getContext("2d");
+    let plateCanvas = document.getElementById("plate");
+    let plateCtx = plateCanvas.getContext("2d");
+    let pointerCanvas = document.getElementById("pointer");
+    let pointerCtx = pointerCanvas.getContext("2d");
+
+    var itemData = {
+        text: ["奖品1", "奖品2", "奖品3", "奖品4", "奖品5", "奖品6"],
+        radio: [25, 15, 5, 15, 30, 10]
+    };
+
+    if (eval(itemData.radio.join("+")) !== 100) {
+        alert("百分比错误！");
+    }
+
+    let lineW = 5;
+    let num = itemData.text.length;
+    let sectorDeg = Math.PI * 2 / num;
 
     pointerCanvas.style.transform = `translate(-50%, -50%) rotate(-90deg)`;
 
@@ -90,47 +65,37 @@ function initPlate() {
     var d = 0;
     pointerCanvas.onclick = function () {
         d = d + 3600;
-        console.log(d);
+        // console.log(d);
         plateCanvas.style.transform = `rotate(${ d }deg)`;
+
+        var randomNum = Math.random()*100;    // [0, 100)
+
+        // function addRadio(n) {
+        //     let sum = 0;
+        //     for (let i = 0; i < n; i++) {
+        //         sum += itemData.radio[i];
+        //     }
+        //     return
+        // }
+
     };
 
-    var deg = Math.PI / 180;
-
-    var plateCenterX = plateCanvas.width/2;
-    var plateCenterY = plateCanvas.height/2;
-    var lineW = 5;
-    // 转盘半径
-    var plateR = plateCenterX < plateCenterY ? plateCenterX-lineW : plateCenterY-lineW;
-    var itemData = {
-        text: ["奖品1", "奖品2", "奖品3", "奖品4", "奖品5", "奖品6","奖品6"],
-        radio: []
-    };
 
     initCircle();
-    // initText();
     initPointer();
 
     // 初始化圆盘
     function initCircle() {
-        let num = itemData.text.length;
-        let sectorDeg = Math.PI * 2 / num;
+        let plateCenterX = plateCanvas.width/2;
+        let plateCenterY = plateCanvas.height/2;
+        let plateR = plateCenterX < plateCenterY ? plateCenterX-lineW : plateCenterY-lineW;
 
         // plateCanvas.style.transform = `rotate(${ -sectorDeg/2-90 }deg)`;
 
         for (let i = 0; i < num; i++) {
-            drawSector(plateCtx, plateCenterX, plateCenterY, plateR, sectorDeg*i, sectorDeg*(i+1), "123");
+            drawSector(plateCtx, plateCenterX, plateCenterY, plateR, sectorDeg*i, sectorDeg*(i+1), itemData.text[i]);
         }
     }
-
-    // 初始化文本
-    // function initText(ctx, text) {
-    //     ctx.save();
-    //     ctx.fillStyle = "#cc0000";
-    //     ctx.font = "50px Microsoft YaHei";
-    //     ctx.textAlign = "center";
-    //     ctx.measureText(text);
-    //     ctx.fillText(text, 300, 100);
-    // }
 
     // 初始化指针
     function initPointer() {
@@ -147,26 +112,61 @@ function initPlate() {
         pointerCtx.fill();
     }
 
+    // 画扇形
     function drawSector(ctx, x, y, r, sDeg, eDeg, text) {
+        // 第一次保存
         ctx.save();
+        // 重新映射画布上的 (0, 0) 位置
+        ctx.translate(x, y);
+        // 重置当前路径
         ctx.beginPath();
-        ctx.arc(x, y, r, sDeg, eDeg);
+        // 画出扇形的圆弧
+        ctx.arc(0, 0, r, sDeg, eDeg);
+        // 定义线粗和颜色
         ctx.lineWidth = lineW;
         ctx.strokeStyle = "#40AA53";
+        // 画出路径
         ctx.stroke();
-        ctx.lineTo(x, y);
-        ctx.lineWidth = 1;
-        ctx.closePath();
-        ctx.strokeStyle = "#40AA53";
-        ctx.stroke();
-        ctx.fillStyle = "#0ff";
-        ctx.fill();
 
+        // 重新定义线粗和颜色
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "#40AA53";
+
+        // 第二次保存
         ctx.save();
+        // 旋转当前画布至扇形的起始位置
+        ctx.rotate(sDeg);
+        // 连接圆弧一端至 (0, 0)
+        ctx.lineTo(0, 0);
+        // 画出路径
+        ctx.stroke();
+        // 连接 (0, 0) 至圆弧另一端
+        ctx.lineTo(r, 0);
+        // 画出路径
+        ctx.stroke();
+        // 定义填充样式
+        ctx.fillStyle = "#0ff";
+        // 填充
+        ctx.fill();
+        // 移动画笔至 (0, 0)，不会创建线条
+        ctx.moveTo(0, 0);
+        // 还原第二次保存
+        ctx.restore();
+
+        // 第三次保存
+        ctx.save();
+        // 旋转当前画布至扇形的中心位置
+        ctx.rotate(Math.PI/2 + eDeg-(eDeg-sDeg)/2);
+        // 定义样式
         ctx.fillStyle = "#cc0000";
-        ctx.font = "50px Microsoft YaHei";
-        // ctx.textAlign = "center";
-        ctx.measureText(text);
-        ctx.fillText(text, 100, 100);
+        ctx.font = "30px Microsoft YaHei";
+        ctx.textAlign = "center";
+        ctx.fillText(text, 0, -r*2/3);
+        // 还原第三次保存
+        ctx.restore();
+
+        ctx.closePath();
+        // 还原第一次保存
+        ctx.restore();
     }
 }
