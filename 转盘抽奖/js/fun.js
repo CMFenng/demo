@@ -65,19 +65,9 @@ function initPlate() {
     var d = 0;
     pointerCanvas.onclick = function () {
         d = d + 3600;
-        // console.log(d);
         plateCanvas.style.transform = `rotate(${ d }deg)`;
 
         var randomNum = Math.random()*100;    // [0, 100)
-
-        // function addRadio(n) {
-        //     let sum = 0;
-        //     for (let i = 0; i < n; i++) {
-        //         sum += itemData.radio[i];
-        //     }
-        //     return
-        // }
-
     };
 
 
