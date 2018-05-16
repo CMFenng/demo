@@ -61,9 +61,9 @@ function initPlate() {
 
     pointerCanvas.style.transform = `translate(-50%, -50%) rotate(-90deg)`;
 
-    // 测试数据
-    var d = 0;
     pointerCanvas.onclick = function () {
+        // 测试数据
+        var d = 0;
         d = d + 3600;
         plateCanvas.style.transform = `rotate(${ d }deg)`;
 
