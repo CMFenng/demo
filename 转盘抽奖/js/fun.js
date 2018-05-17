@@ -9,6 +9,12 @@ function getFileDate(e) {
             let data = handleData(e.target.result);
             // 绘制转盘
             // drawPan();
+
+
+
+            // if (eval(itemData.radio.join("+")) !== 100) {
+            //     alert("百分比错误！");
+            // }
         };
         reader.readAsText(file);
     }
@@ -41,54 +47,55 @@ function handleData(data) {
 
 // 初始化转盘
 function initPlate() {
+    let itemData = {
+        text: ["iPhone X📱", "小米 6📱", "MBP💻", "索尼相机📷", "iPad", "iMac💻", "耳机🎧", "手表⌚"],
+        radio: [15, 20, 5, 15, 8, 11, 14, 12]
+    };
+
     let plateCanvas = document.getElementById("plate");
     let plateCtx = plateCanvas.getContext("2d");
     let pointerCanvas = document.getElementById("pointer");
     let pointerCtx = pointerCanvas.getContext("2d");
-
-    var itemData = {
-        text: ["奖品1", "奖品2", "奖品3", "奖品4", "奖品5", "奖品6"],
-        radio: [25, 15, 5, 15, 30, 10]
-    };
-
-    if (eval(itemData.radio.join("+")) !== 100) {
-        alert("百分比错误！");
-    }
+    let btn = document.getElementById("btn");
 
     let lineW = 5;
     let num = itemData.text.length;
-    let sectorDeg = Math.PI * 2 / num;
-
-    pointerCanvas.style.transform = `translate(-50%, -50%) rotate(-90deg)`;
-
-    pointerCanvas.onclick = function () {
-        // 测试数据
-        var d = 0;
-        d = d + 3600;
-        plateCanvas.style.transform = `rotate(${ d }deg)`;
-
-        var randomNum = Math.random()*100;    // [0, 100)
-    };
-
+    let sectorDeg = 360 / num;
+    // 角度转弧度
+    let deg = Math.PI / 180;
+    let round = 0;
+    let initCircleDeg = -90-sectorDeg/2;
 
     initCircle();
     initPointer();
 
+    btn.onclick = function () {
+        let randomNum = Math.random()*100;    // [0, 100)
+        round++;
+
+        itemData.radio.reduce((prev, curv, i) => {
+            if (randomNum >= prev && randomNum < prev + curv) {
+                runPlate(i, prev);
+            }
+            return prev + curv;
+        }, 0);
+    };
+
     // 初始化圆盘
     function initCircle() {
+        plateCanvas.style.transform = `rotate(${ initCircleDeg }deg)`;
         let plateCenterX = plateCanvas.width/2;
         let plateCenterY = plateCanvas.height/2;
         let plateR = plateCenterX < plateCenterY ? plateCenterX-lineW : plateCenterY-lineW;
 
-        // plateCanvas.style.transform = `rotate(${ -sectorDeg/2-90 }deg)`;
-
         for (let i = 0; i < num; i++) {
-            drawSector(plateCtx, plateCenterX, plateCenterY, plateR, sectorDeg*i, sectorDeg*(i+1), itemData.text[i]);
+            drawSector(plateCtx, plateCenterX, plateCenterY, plateR, sectorDeg*i*deg, sectorDeg*(i+1)*deg, itemData.text[i]);
         }
     }
 
     // 初始化指针
     function initPointer() {
+        pointerCanvas.style.transform = `translate(-50%, -50%) rotate(-90deg)`;
         let pointerCenterX = pointerCanvas.width/2;
         let pointerCenterY = pointerCanvas.height/2;
         let pointerR = pointerCenterX < pointerCenterY ? pointerCenterX/2 : pointerCenterY/2;
@@ -100,6 +107,15 @@ function initPlate() {
         pointerCtx.closePath();
         pointerCtx.fillStyle = "#ff0000";
         pointerCtx.fill();
+    }
+
+    // 转动圆盘
+    function runPlate(i) {
+        console.log(`下标：${ i } --- 文本：${ itemData.text[i] }`);
+        setTimeout(function () {
+            alert(`恭喜你，抽中 ${ itemData.text[i] }！`);
+        }, 6000);
+        plateCanvas.style.transform = `rotate(${ initCircleDeg + 3600*round + sectorDeg*(num-i) }deg)`;
     }
 
     // 画扇形
