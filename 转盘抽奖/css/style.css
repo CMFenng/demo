@@ -6,7 +6,45 @@ html, body {
     padding: 0;
 }
 
-#box {
+#iptBox {
+    width: 200px;
+    height: 50px;
+    margin: 0 auto;
+    border-radius: 10px;
+    background-color: #0ff;
+    line-height: 50px;
+    text-align: center;
+    display: block;
+    position: relative;
+    overflow: hidden;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#iptBox input {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+
+
+#box1 {
+    width: 300px;
+    border: 10px solid #40AA53;
+    border-radius: 10px;
+    margin: 100px auto;
+    padding: 20px;
+    position: relative;
+    /*background-color: #0ff;*/
+}
+
+#box2 {
     width: 600px;
     height: 600px;
     margin: 50px auto;
@@ -14,7 +52,6 @@ html, body {
 }
 
 #plate {
-    transition: transform 6s;
     transform-origin: 50% 50%;
 }
 

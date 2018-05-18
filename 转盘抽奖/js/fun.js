@@ -7,14 +7,11 @@ function getFileDate(e) {
         reader.onload = function(e) {
             // 处理数据
             let data = handleData(e.target.result);
-            // 绘制转盘
-            // drawPan();
-
-
-
-            // if (eval(itemData.radio.join("+")) !== 100) {
-            //     alert("百分比错误！");
-            // }
+            if (data !== undefined) {
+                document.getElementById("box1").classList.add("hide");
+                document.getElementById("box2").classList.remove("hide");
+                initPlate(data);
+            }
         };
         reader.readAsText(file);
     }
@@ -23,22 +20,24 @@ function getFileDate(e) {
 function handleData(data) {
     // 分割
     let itemArr = data.split("\n");
-    let arr = [];
+    let result = {};
+    result.text = [];
+    result.radio = [];
 
     for (let i = 0; i < itemArr.length; i++) {
         // 过滤多余的空行
         if (itemArr[i] === "") {
             continue;
         } else {
-            let obj = {
-                option: itemArr[i].split("=")[0],
-                ratio: itemArr[i].split("=")[1]
-            };
-            arr.push(obj);
+            result.text.push(itemArr[i].split("=")[0]);
+            result.radio.push(+itemArr[i].split("=")[1]);
         }
     }
-    console.log(arr);
-    return arr;
+    if (eval(result.radio.join("+")) !== 100) {
+        alert("文件错误或百分比错误！");
+        return;
+    }
+    return result;
 }
 
 
@@ -46,11 +45,11 @@ function handleData(data) {
 
 
 // 初始化转盘
-function initPlate() {
-    let itemData = {
-        text: ["iPhone X📱", "小米 6📱", "MBP💻", "索尼相机📷", "iPad", "iMac💻", "耳机🎧", "手表⌚"],
-        radio: [15, 20, 5, 15, 8, 11, 14, 12]
-    };
+function initPlate(data) {
+    // let data = {
+    //     text: ["一等奖", "二等奖", "三等奖", "四等奖", "五等奖", "六等奖", "谢谢参与"],
+    //     radio: [5, 7, 10, 15, 18, 20, 25]
+    // };
 
     let plateCanvas = document.getElementById("plate");
     let plateCtx = plateCanvas.getContext("2d");
@@ -59,7 +58,7 @@ function initPlate() {
     let btn = document.getElementById("btn");
 
     let lineW = 5;
-    let num = itemData.text.length;
+    let num = data.text.length;
     let sectorDeg = 360 / num;
     // 角度转弧度
     let deg = Math.PI / 180;
@@ -73,7 +72,7 @@ function initPlate() {
         let randomNum = Math.random()*100;    // [0, 100)
         round++;
 
-        itemData.radio.reduce((prev, curv, i) => {
+        data.radio.reduce((prev, curv, i) => {
             if (randomNum >= prev && randomNum < prev + curv) {
                 runPlate(i, prev);
             }
@@ -84,13 +83,15 @@ function initPlate() {
     // 初始化圆盘
     function initCircle() {
         plateCanvas.style.transform = `rotate(${ initCircleDeg }deg)`;
+
         let plateCenterX = plateCanvas.width/2;
         let plateCenterY = plateCanvas.height/2;
         let plateR = plateCenterX < plateCenterY ? plateCenterX-lineW : plateCenterY-lineW;
 
         for (let i = 0; i < num; i++) {
-            drawSector(plateCtx, plateCenterX, plateCenterY, plateR, sectorDeg*i*deg, sectorDeg*(i+1)*deg, itemData.text[i]);
+            drawSector(plateCtx, plateCenterX, plateCenterY, plateR, sectorDeg*i*deg, sectorDeg*(i+1)*deg, data.text[i]);
         }
+        plateCanvas.style.transition = `transform 6s`;
     }
 
     // 初始化指针
@@ -111,9 +112,9 @@ function initPlate() {
 
     // 转动圆盘
     function runPlate(i) {
-        console.log(`下标：${ i } --- 文本：${ itemData.text[i] }`);
+        console.log(`下标：${ i } --- 文本：${ data.text[i] }`);
         setTimeout(function () {
-            alert(`恭喜你，抽中 ${ itemData.text[i] }！`);
+            alert(`恭喜你，抽中 ${ data.text[i] }！`);
         }, 6000);
         plateCanvas.style.transform = `rotate(${ initCircleDeg + 3600*round + sectorDeg*(num-i) }deg)`;
     }
