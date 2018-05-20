@@ -8,7 +8,7 @@
     <script src="js/fun.js"></script>
 </head>
 <body>
-    <div id="box1" class="hide">
+    <div id="box1" class="display">
         <a id="iptBox">
             <input type="file" accept=".txt" onchange="getFileDate(event)">选择文件
         </a>
@@ -38,7 +38,11 @@
     </div>
 
     <div id="alertBox">
-        <div id="alert">1</div>
+        <div id="alertTitle">中奖提醒</div>
+        <div id="alertInfo">二等奖</div>
+        <div id="alertBtn">
+            <button id="okBtn">确定</button>
+        </div>
     </div>
     <script>
 
