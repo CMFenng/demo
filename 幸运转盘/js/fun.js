@@ -4,13 +4,15 @@ function getFileDate(e) {
     if (file) {
         let reader = new FileReader();
         // 文件加载成功
-        reader.onload = function(e) {
+        reader.onload = function(event) {
             // 处理数据
-            let data = handleData(e.target.result);
+            let data = handleData(event.target.result);
             if (data !== undefined) {
-                document.getElementById("box1").classList.add("hide");
-                document.getElementById("box2").classList.remove("hide");
+                document.getElementById("fileBox").classList.add("hide");
+                document.getElementById("canvasBox").classList.remove("hide");
                 initPlate(data);
+            } else {
+                e.target.value = "";
             }
         };
         reader.readAsText(file);
@@ -29,20 +31,25 @@ function handleData(data) {
         if (itemArr[i] === "") {
             continue;
         } else {
-            result.text.push(itemArr[i].split("=")[0]);
-            result.radio.push(+itemArr[i].split("=")[1]);
+            let itemKey = itemArr[i].split("=")[0];
+            let itemVal = itemArr[i].split("=")[1];
+            result.text.push(itemKey);
+            if (itemVal !== "" && !isNaN(+itemVal) && typeof (+itemVal) == "number") {
+                result.radio.push(+itemVal);
+            }
         }
     }
-    if (eval(result.radio.join("+")) !== 100) {
-        alert("文件错误或百分比错误！");
+    if (result.text.length !== result.radio.length) {
+        alert("文件错误！");
         return;
+
+    } else if (eval(result.radio.join("+")) !== 100) {
+        alert("百分比错误！");
+        return;
+    } else {
+        return result;
     }
-    return result;
 }
-
-
-//====================================
-
 
 // 初始化转盘
 function initPlate(data) {
@@ -113,9 +120,10 @@ function initPlate(data) {
     // 转动圆盘
     function runPlate(i) {
         console.log(`下标：${ i } --- 文本：${ data.text[i] }`);
+        btn.setAttribute("disabled", "true");
         setTimeout(function () {
-            alert(`恭喜你，抽中 ${ data.text[i] }！`);
-        }, 6000);
+            alert(data.text[i]);
+        }, 6500);
         plateCanvas.style.transform = `rotate(${ initCircleDeg + 3600*round + sectorDeg*(num-i) }deg)`;
     }
 

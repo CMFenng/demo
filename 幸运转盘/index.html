@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>幸运转盘</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/fun.js"></script>
+</head>
+<body>
+    <div id="fileBox" class="frame center">
+        <a class="btn no-select">
+            <input type="file" accept=".txt" onchange="getFileDate(event)">选 择 文 件
+        </a>
+        <div id="describe">
+            <p>文件要求：</p>
+            <p>
+                格式：奖项=百分比(值越高越容易抽中)<br>
+                <br>
+                一等奖=5<br>
+                二等奖=7<br>
+                三等奖=10<br>
+                四等奖=15<br>
+                五等奖=18<br>
+                六等奖=20<br>
+                谢谢参与=25
+            </p>
+        </div>
+    </div>
+
+    <div id="canvasBox" class="no-select hide">
+        <canvas id="plate" width="600" height="600">
+            浏览器不支持！
+        </canvas>
+        <canvas id="pointer" width="200" height="200">
+            浏览器不支持！
+        </canvas>
+        <button id="btn">开始</br>抽奖</button>
+    </div>
+    <script>
+        window.alert = function (str) {
+            let alertBox = document.createElement("div");
+            alertBox.id = "alertBox";
+            alertBox.className = "frame center no-select";
+
+            let htmlStr = `
+                <div id="title">抽奖结果</div>
+                <div id="info">${ str }</div>
+                <button class="btn" onclick="doOk()">确 定</button>
+            `;
+            alertBox.innerHTML = htmlStr;
+            document.body.appendChild(alertBox);
+            this.doOk = function(){
+                document.body.removeChild(alertBox);
+                document.getElementById("btn").removeAttribute("disabled");
+            };
+            alertBox.focus();
+        }
+    </script>
+</body>
+</html>
