@@ -1,4 +1,9 @@
+/**
+ * 读取文件
+ * @param e 事件对象
+ */
 function getFileDate(e) {
+    // 只读取文件列表中的第一项
     let file = e.target.files[0];
     // 判断文件是否存在
     if (file) {
@@ -7,11 +12,13 @@ function getFileDate(e) {
         reader.onload = function(event) {
             // 处理数据
             let data = handleData(event.target.result);
+            // 文件数据正确
             if (data !== undefined) {
                 document.getElementById("fileBox").classList.add("hide");
                 document.getElementById("canvasBox").classList.remove("hide");
                 initPlate(data);
             } else {
+                // 文件数据出错，清空文件选择框的值
                 e.target.value = "";
             }
         };
@@ -19,11 +26,17 @@ function getFileDate(e) {
     }
 }
 
+/**
+ * 处理文件数据
+ * @param data
+ */
 function handleData(data) {
     // 分割
     let itemArr = data.split("\n");
     let result = {};
+    // 存放奖项
     result.text = [];
+    // 存放百分比
     result.radio = [];
 
     for (let i = 0; i < itemArr.length; i++) {
@@ -34,15 +47,17 @@ function handleData(data) {
             let itemKey = itemArr[i].split("=")[0];
             let itemVal = itemArr[i].split("=")[1];
             result.text.push(itemKey);
+            // 不为空字符串 且 不为 NaN 且 为 number 类型
             if (itemVal !== "" && !isNaN(+itemVal) && typeof (+itemVal) == "number") {
                 result.radio.push(+itemVal);
             }
         }
     }
+    // 奖项和百分比不能一一对应
     if (result.text.length !== result.radio.length) {
         alert("文件错误！");
         return;
-
+    // 百分比相加不等于 100
     } else if (eval(result.radio.join("+")) !== 100) {
         alert("百分比错误！");
         return;
@@ -51,7 +66,10 @@ function handleData(data) {
     }
 }
 
-// 初始化转盘
+/**
+ * 初始化转盘
+ * @param data 文件的数据
+ */
 function initPlate(data) {
     // let data = {
     //     text: ["一等奖", "二等奖", "三等奖", "四等奖", "五等奖", "六等奖", "谢谢参与"],
@@ -64,21 +82,28 @@ function initPlate(data) {
     let pointerCtx = pointerCanvas.getContext("2d");
     let btn = document.getElementById("btn");
 
+    // 转盘边框的宽度
     let lineW = 5;
+    // 奖项数量
     let num = data.text.length;
+    // 每个奖项占据的角度
     let sectorDeg = 360 / num;
     // 角度转弧度
     let deg = Math.PI / 180;
+    // 轮数
     let round = 0;
+    // 圆盘的出事角度
     let initCircleDeg = -90-sectorDeg/2;
 
     initCircle();
     initPointer();
 
+    // 注册点击事件
     btn.onclick = function () {
         let randomNum = Math.random()*100;    // [0, 100)
         round++;
 
+        // 叠加器
         data.radio.reduce((prev, curv, i) => {
             if (randomNum >= prev && randomNum < prev + curv) {
                 runPlate(i, prev);
@@ -87,29 +112,39 @@ function initPlate(data) {
         }, 0);
     };
 
-    // 初始化圆盘
+    /**
+     * 初始化圆盘
+     */
     function initCircle() {
         plateCanvas.style.transform = `rotate(${ initCircleDeg }deg)`;
 
+        // 中心坐标
         let plateCenterX = plateCanvas.width/2;
         let plateCenterY = plateCanvas.height/2;
+        // 半径
         let plateR = plateCenterX < plateCenterY ? plateCenterX-lineW : plateCenterY-lineW;
 
         for (let i = 0; i < num; i++) {
+            // 绘制扇形
             drawSector(plateCtx, plateCenterX, plateCenterY, plateR, sectorDeg*i*deg, sectorDeg*(i+1)*deg, data.text[i]);
         }
         plateCanvas.style.transition = `transform 6s`;
     }
 
-    // 初始化指针
+    /**
+     * 初始化指针
+     */
     function initPointer() {
         pointerCanvas.style.transform = `translate(-50%, -50%) rotate(-90deg)`;
+        // 中心坐标
         let pointerCenterX = pointerCanvas.width/2;
         let pointerCenterY = pointerCanvas.height/2;
+        // 半径
         let pointerR = pointerCenterX < pointerCenterY ? pointerCenterX/2 : pointerCenterY/2;
 
         pointerCtx.save();
         pointerCtx.beginPath();
+        // 绘制圆形
         pointerCtx.arc(pointerCenterX, pointerCenterY, pointerR, Math.PI/10, Math.PI*2-Math.PI/10);
         pointerCtx.lineTo(pointerCenterX+pointerR*2, pointerCenterY);
         pointerCtx.closePath();
@@ -117,17 +152,31 @@ function initPlate(data) {
         pointerCtx.fill();
     }
 
-    // 转动圆盘
+    /**
+     * 转动转盘
+     * @param i 对应的奖项下标
+     */
     function runPlate(i) {
         console.log(`下标：${ i } --- 文本：${ data.text[i] }`);
+        // 按钮失能
         btn.setAttribute("disabled", "true");
+        // 定时弹出框弹出
         setTimeout(function () {
             alert(data.text[i]);
         }, 6500);
         plateCanvas.style.transform = `rotate(${ initCircleDeg + 3600*round + sectorDeg*(num-i) }deg)`;
     }
 
-    // 画扇形
+    /**
+     * 绘制扇形
+     * @param ctx   canvas 的 context 实例
+     * @param x     x 轴坐标
+     * @param y     y 轴坐标
+     * @param r     半径
+     * @param sDeg  扇形开始的弧度
+     * @param eDeg  扇形结束的弧度
+     * @param text  文本
+     */
     function drawSector(ctx, x, y, r, sDeg, eDeg, text) {
         // 第一次保存
         ctx.save();

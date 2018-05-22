@@ -51,6 +51,7 @@
             document.body.appendChild(alertBox);
             this.doOk = function(){
                 document.body.removeChild(alertBox);
+                // 重新使能按钮
                 document.getElementById("btn").removeAttribute("disabled");
             };
             alertBox.focus();
