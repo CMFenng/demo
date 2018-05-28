@@ -22,6 +22,7 @@ function getFileDate(e) {
                 e.target.value = "";
             }
         };
+        // 加载文本
         reader.readAsText(file);
     }
 }
