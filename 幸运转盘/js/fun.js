@@ -29,7 +29,7 @@ function getFileDate(e) {
 
 /**
  * 处理文件数据
- * @param data
+ * @param data 原始数据
  */
 function handleData(data) {
     // 分割
